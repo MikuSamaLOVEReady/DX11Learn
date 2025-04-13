@@ -35,7 +35,7 @@ void SystemClass::Shutdown()
 {
 	if(m_Application)
 	{
-		m_Application->ShutDown();
+		m_Application->Shutdown();
 		delete m_Application;
 		m_Application = nullptr;
 	}
@@ -107,7 +107,7 @@ bool SystemClass::Frame()
 		return false;
 	}
 
-	result = m_Application->Frame();
+	result = m_Application->Frame(); /// Render!!
 	if (!result)
 	{
 		return false;

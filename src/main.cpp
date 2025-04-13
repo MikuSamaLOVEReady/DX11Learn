@@ -1,3 +1,5 @@
+#include <cwchar>
+
 #include "systemclass.h"
 
 
@@ -6,6 +8,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	SystemClass* System;
 	bool result;
 
+	WCHAR buffer[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, buffer);
+	wprintf(L"当前运行目录：%s\n", buffer);
 
 	// Create the system object.
 	System = new SystemClass;
