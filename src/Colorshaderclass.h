@@ -12,6 +12,7 @@ using namespace std;
 class ColorShaderClass
 {
 private:
+	/// Cbuffer struct
 	struct MatrixBufferType
 	{
 		XMMATRIX world;

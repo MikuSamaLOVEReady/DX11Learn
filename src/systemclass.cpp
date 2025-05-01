@@ -102,10 +102,13 @@ LRESULT SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM 
 bool SystemClass::Frame()
 {
 	bool result;
+
+	
 	if (m_Input->IsKeyDown(VK_SPACE))
 	{
 		return false;
 	}
+	
 
 	result = m_Application->Frame(); /// Render!!
 	if (!result)
@@ -114,6 +117,9 @@ bool SystemClass::Frame()
 	}
 	return true;
 }
+
+
+
 
 void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 {
@@ -189,6 +195,7 @@ void SystemClass::ShutdownWindows()
 	ApplicationHandle = NULL;
 	return;
 }
+
 
 LRESULT WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {

@@ -1,7 +1,11 @@
 #include "Cameraclass.h"
 
+#include "Applicationclass.h"
+
 CameraClass::CameraClass():m_positionX(0.0f),m_positionY(0.0f),m_positionZ(0.0f),
-m_rotationX(0.0f),m_rotationY(0.0f),m_rotationZ(0.0f)
+                           m_rotationX(0.0f),m_rotationY(0.0f),m_rotationZ(0.0f),
+                           m_cameraUp(0.0f,1.0f,0.0f), m_cameraFront(0.0f,0.0f,1.0f),
+                           m_position(m_positionX, m_positionY, m_positionZ)
 {
 }
 
@@ -42,25 +46,22 @@ XMFLOAT3 CameraClass::GetRotation()
 /// build View Matrix
 void CameraClass::Render()
 {
-	XMFLOAT3 up, position, lookAt;
-	XMVECTOR upVector, positionVector, lookAtVector;
+
+	XMVECTOR upVector, lookAtVector;
 	float yaw, pitch, roll;
 	XMMATRIX rotationMatrix;
 
-	up.x = 0.0f;
-	up.y = 1.0f;
-	up.z = 0.0f;
 
-	upVector = XMLoadFloat3(&up);
-	position.x = m_positionX;
-	position.y = m_positionY;
-	position.z = m_positionZ;
-	positionVector = XMLoadFloat3(&position);
-	lookAt.x = 0.0f;
-	lookAt.y = 0.0f;
-	lookAt.z = 1.0f;
-	lookAtVector = XMLoadFloat3(&lookAt);
+	upVector = XMLoadFloat3(&m_cameraUp);
+	m_position.x = m_positionX;
+	m_position.y = m_positionY;
+	m_position.z = m_positionZ;
+	XMVECTOR positionVector = XMLoadFloat3(&m_position);
 
+
+	lookAtVector = XMLoadFloat3(&m_cameraFront);
+
+	/// rotate() 
 	pitch = m_rotationX * 0.0174532925f;		/// degree -> rad
 	yaw = m_rotationY * 0.0174532925f;
 	roll = m_rotationZ * 0.0174532925f;
@@ -69,9 +70,10 @@ void CameraClass::Render()
 	/// transform to
 	lookAtVector = XMVector3TransformCoord(lookAtVector, rotationMatrix);
 	upVector = XMVector3TransformCoord(upVector, rotationMatrix);
-	lookAtVector = XMVectorAdd(positionVector, lookAtVector);
 
-	m_viewMatrix = XMMatrixLookAtLH(positionVector, lookAtVector ,upVector);
+	lookAtVector = XMVectorAdd(positionVector, lookAtVector);	/// pos + front = lookat
+
+	UpdateViewMatrix(positionVector,lookAtVector,upVector);
 	return;
 }
 
@@ -79,6 +81,30 @@ void CameraClass::GetViewMatrix(XMMATRIX& viewMatrix)
 {
 	viewMatrix = m_viewMatrix;
 	return;
+}
+
+void CameraClass::ProcessKeyboardInput(float deltaTime)
+{
+	XMVECTOR cur_pos = XMLoadFloat3(&m_position);
+	XMVECTOR cur_front = XMLoadFloat3(&m_cameraFront);
+	XMVECTOR cur_up = XMLoadFloat3(&m_cameraUp);
+
+	XMVECTOR forward = XMVector3Normalize(cur_pos + cur_front);
+	XMVECTOR right = XMVector3Normalize(XMVector3Cross(cur_up, forward));
+
+	XMVECTOR moveDelta = XMVectorZero();
+	const float speed = 5.0f;
+
+	if (GetAsyncKeyState('W') & 0x8000)
+		moveDelta += forward;
+	if (GetAsyncKeyState('S') & 0x8000)
+		moveDelta -= forward;
+	if (GetAsyncKeyState('A') & 0x8000)
+		moveDelta -= right;
+	if (GetAsyncKeyState('D') & 0x8000)
+		moveDelta += right;
+
+
 }
 
 

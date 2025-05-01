@@ -1,19 +1,14 @@
 #pragma once
 
-
-//////////////
-// INCLUDES //
-//////////////
 #include <windows.h>
 
 #include "D3dclass.h"
 #include "Cameraclass.h"
 #include "Modelclass.h"
-#include "Colorshaderclass.h"
+//#include "Colorshaderclass.h"
+#include "Textureshaderclass.h"
 
-/////////////
-// GLOBALS //
-/////////////
+
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
@@ -38,6 +33,11 @@ private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
 	Modelclass* m_Model;
-	ColorShaderClass* m_ColorShader;
+
+	//ColorShaderClass* m_ColorShader;
+	Textureshaderclass* m_TextureShader;
+
+	//LightShaderClass* m_LightShader;
+	//LightClass* m_Light;
 };
 

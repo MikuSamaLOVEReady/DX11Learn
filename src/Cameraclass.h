@@ -18,11 +18,25 @@ public:
 
 	void Render();			/// create view Matrix
 	void GetViewMatrix(XMMATRIX&);
+	void UpdateViewMatrix(XMVECTOR positionVector, XMVECTOR lookAtVector, XMVECTOR upVector);
+
+private:
+	void ProcessKeyboardInput(float deltaTime);
 
 private:
 	float m_positionX, m_positionY, m_positionZ;
 	float m_rotationX, m_rotationY, m_rotationZ;	/// unit == degree
 	XMMATRIX m_viewMatrix;
-
+	XMFLOAT3 m_cameraFront;		/// positionVector + Front = look at
+	XMFLOAT3 m_cameraUp;
+	XMFLOAT3 m_position;		
 };
+
+
+
+inline void CameraClass::UpdateViewMatrix(XMVECTOR positionVector , XMVECTOR lookAtVector , XMVECTOR upVector)
+{
+	m_viewMatrix = XMMatrixLookAtLH(positionVector, lookAtVector, upVector);
+	return;
+}
 
