@@ -89,20 +89,20 @@ void CameraClass::ProcessKeyboardInput(float deltaTime)
 	XMVECTOR cur_front = m_cameraFront;
 	XMVECTOR cur_up = m_cameraUp;
 
-	XMVECTOR forward = XMVector3Normalize(cur_pos + cur_front);
+	XMVECTOR forward = XMVector3Normalize(cur_front);
 	XMVECTOR right = XMVector3Normalize(XMVector3Cross(cur_up, forward));
 
 	XMVECTOR moveDelta = XMVectorZero();
 	const float speed = 15.0f;
 
 	if (GetAsyncKeyState('W') & 0x8000)
-		moveDelta -= forward;
-	if (GetAsyncKeyState('S') & 0x8000)
 		moveDelta += forward;
+	if (GetAsyncKeyState('S') & 0x8000)
+		moveDelta -= forward;
 	if (GetAsyncKeyState('A') & 0x8000)
-		moveDelta += right;
-	if (GetAsyncKeyState('D') & 0x8000)
 		moveDelta -= right;
+	if (GetAsyncKeyState('D') & 0x8000)
+		moveDelta += right;
 
 	if (!XMVector3Equal(moveDelta, XMVectorZero()))
 	{
