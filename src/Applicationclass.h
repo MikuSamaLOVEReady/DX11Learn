@@ -39,5 +39,7 @@ private:
 
 	//LightShaderClass* m_LightShader;
 	//LightClass* m_Light;
+	float deltaTime;
+	LARGE_INTEGER t0, t1, freq;
 };
 

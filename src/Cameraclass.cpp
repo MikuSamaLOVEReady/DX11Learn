@@ -4,8 +4,9 @@
 
 CameraClass::CameraClass():m_positionX(0.0f),m_positionY(0.0f),m_positionZ(0.0f),
                            m_rotationX(0.0f),m_rotationY(0.0f),m_rotationZ(0.0f),
-                           m_cameraUp(0.0f,1.0f,0.0f), m_cameraFront(0.0f,0.0f,1.0f),
-                           m_position(m_positionX, m_positionY, m_positionZ)
+m_cameraUp(XMVectorSet(0.0f,1.0f,0.0f,0.0f)),
+m_cameraFront(XMVectorSet(0.0f,0.0f,1.0f,0.0f)),
+m_position(XMVectorSet(m_positionX, m_positionY, m_positionZ,0.0f))
 {
 }
 
@@ -22,6 +23,10 @@ void CameraClass::SetPosition(float x , float y,  float z)
 	m_positionX = x;
 	m_positionY = y;
 	m_positionZ = z;
+	m_position = XMVectorSet(m_positionX,
+		m_positionY,
+		m_positionZ,
+		1.0f);
 	return;
 }
 
@@ -47,19 +52,14 @@ XMFLOAT3 CameraClass::GetRotation()
 void CameraClass::Render()
 {
 
-	XMVECTOR upVector, lookAtVector;
+	  
 	float yaw, pitch, roll;
 	XMMATRIX rotationMatrix;
 
 
-	upVector = XMLoadFloat3(&m_cameraUp);
-	m_position.x = m_positionX;
-	m_position.y = m_positionY;
-	m_position.z = m_positionZ;
-	XMVECTOR positionVector = XMLoadFloat3(&m_position);
-
-
-	lookAtVector = XMLoadFloat3(&m_cameraFront);
+	XMVECTOR upVector = m_cameraUp;
+	XMVECTOR positionVector = m_position;
+	XMVECTOR lookAtVector = m_cameraFront;
 
 	/// rotate() 
 	pitch = m_rotationX * 0.0174532925f;		/// degree -> rad
@@ -85,25 +85,33 @@ void CameraClass::GetViewMatrix(XMMATRIX& viewMatrix)
 
 void CameraClass::ProcessKeyboardInput(float deltaTime)
 {
-	XMVECTOR cur_pos = XMLoadFloat3(&m_position);
-	XMVECTOR cur_front = XMLoadFloat3(&m_cameraFront);
-	XMVECTOR cur_up = XMLoadFloat3(&m_cameraUp);
+	XMVECTOR cur_pos = m_position;
+	XMVECTOR cur_front = m_cameraFront;
+	XMVECTOR cur_up = m_cameraUp;
 
 	XMVECTOR forward = XMVector3Normalize(cur_pos + cur_front);
 	XMVECTOR right = XMVector3Normalize(XMVector3Cross(cur_up, forward));
 
 	XMVECTOR moveDelta = XMVectorZero();
-	const float speed = 5.0f;
+	const float speed = 15.0f;
 
 	if (GetAsyncKeyState('W') & 0x8000)
-		moveDelta += forward;
-	if (GetAsyncKeyState('S') & 0x8000)
 		moveDelta -= forward;
+	if (GetAsyncKeyState('S') & 0x8000)
+		moveDelta += forward;
 	if (GetAsyncKeyState('A') & 0x8000)
-		moveDelta -= right;
-	if (GetAsyncKeyState('D') & 0x8000)
 		moveDelta += right;
+	if (GetAsyncKeyState('D') & 0x8000)
+		moveDelta -= right;
 
+	if (!XMVector3Equal(moveDelta, XMVectorZero()))
+	{
+		moveDelta = XMVector3Normalize(moveDelta)
+			* speed
+			* deltaTime;
+		m_position = XMVectorAdd(m_position, moveDelta);
+		//g_CamTarget = XMVectorAdd(g_CamTarget, moveDelta);
+	}
 
 }
 

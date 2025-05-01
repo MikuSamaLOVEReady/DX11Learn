@@ -1,6 +1,7 @@
 #include "Applicationclass.h"
 
-ApplicationClass::ApplicationClass():m_Direct3D(nullptr),m_Camera(nullptr),m_Model(nullptr), m_TextureShader(nullptr)
+ApplicationClass::ApplicationClass():m_Direct3D(nullptr),m_Camera(nullptr),
+m_Model(nullptr), m_TextureShader(nullptr), deltaTime(0.0f)
 {
 }
 
@@ -59,6 +60,12 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
 		return false;
 	}
+
+
+	/// Time
+	QueryPerformanceFrequency(&freq);
+	QueryPerformanceCounter(&t0);
+
 
 	return true;
 }
@@ -121,8 +128,13 @@ bool ApplicationClass::Render()
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
 
-	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	// deltatime
+	QueryPerformanceCounter(&t1);
+	float deltaTime = float(t1.QuadPart - t0.QuadPart) / freq.QuadPart;
+	t0 = t1;
+	m_Camera->ProcessKeyboardInput(deltaTime);
 
+	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 	m_Camera->Render();				/// update camera data
 	m_Direct3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);

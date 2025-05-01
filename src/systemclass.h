@@ -39,12 +39,10 @@ private:
 
 	InputClass* m_Input;
 	ApplicationClass* m_Application;
+
 };
 
 ///CALLBACK
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-/////////////
-// GLOBALS //
-/////////////
 static SystemClass* ApplicationHandle = nullptr;

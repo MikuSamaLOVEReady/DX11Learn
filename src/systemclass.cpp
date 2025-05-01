@@ -1,4 +1,5 @@
 #include "systemclass.h"
+#include "Cameraclass.h"
 
 SystemClass::SystemClass():m_Input(nullptr),m_Application(nullptr)
 {
