@@ -246,7 +246,7 @@ bool ApplicationClass::Render(float ratation)
 
 
 	/// Render Ship
-	XMMATRIX scaleMatrix_ship = XMMatrixScaling(0.01f, 0.01f, 0.01f);				// 飞船较小
+	XMMATRIX scaleMatrix_ship = XMMatrixScaling(0.05f, 0.05f, 0.05f);				// 飞船较小
 	XMMATRIX rotateMatrix_ship = XMMatrixIdentity();
 	/// 飞船在月球轨道运行
 	XMMATRIX translateMatrix_moonShip = XMMatrixTranslation(50.0f, 15.0f, 10.0f); // 月亮轨道相较于地球的距离
@@ -262,9 +262,9 @@ bool ApplicationClass::Render(float ratation)
 
 	/// 飞船在地月轨道运行
 	//TODO: 地月轨道定义
-	float theta = fmod(ratation * 15.f, 2 * XM_PI); // 控制飞船的移动速度
-	float a = 50.0f; // 半长轴
-	float b = 45.0f; // 半短轴
+	float theta = fmod(ratation * 35.f, 2 * XM_PI); // 控制飞船的移动速度
+	float a = 35.0f; // 半长轴
+	float b = 135.0f; // 半短轴
 	float x = a * cos(theta);
 	float y = 10.0f;   // 假设轨道在XY平面上，y=0
 	float z = b * sin(theta);
@@ -272,7 +272,7 @@ bool ApplicationClass::Render(float ratation)
 	XMMATRIX SRTMatrix_EarthMoonShip = XMMatrixMultiply(scaleMatrix_ship, translateMatrix_EarthMoonShip);
 	SRTMatrix_EarthMoonShip = XMMatrixMultiply(SRTMatrix_EarthMoonShip, worldMatrix_earth);
 
-	// 停泊轨道
+	// 停泊轨道（没要求）
 	float orbit_radius = 25.0f;			  // 停泊轨道的半径
 	float orbit_angle = ratation * 6.0f;  // 随时间变化的角度
 	XMMATRIX translateMatrix_local = XMMatrixTranslation(orbit_radius * cos(orbit_angle), 25.0f, orbit_radius * sin(orbit_angle));
@@ -280,9 +280,32 @@ bool ApplicationClass::Render(float ratation)
 	XMMATRIX SRTMatrix_ship = XMMatrixMultiply(SRMatrix_ship, translateMatrix_local);	/// local matrix
 	XMMATRIX worldMatrix_ship = XMMatrixMultiply(SRTMatrix_ship, worldMatrix_earth);
 
+	// TODO： 通过按键时间进行切换
+	
+	m_Model_ship->Render(m_Direct3D->GetDeviceContext());
+	switch (orbitID)
+	{
+		case 0:
+			result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model_ship->GetIndexCount(),
+				SRTMatrix_EarthMoonShip, viewMatrix, projectionMatrix, m_Model_ship->GetTexture());
+			break;
+		case 1:
+			result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model_ship->GetIndexCount(),
+				toEarthOrbitMatrix, viewMatrix, projectionMatrix, m_Model_ship->GetTexture());
+			break;
+		case 2:
+			result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model_ship->GetIndexCount(),
+				toMoonOrbitMatrix, viewMatrix, projectionMatrix, m_Model_ship->GetTexture());
+			break;
+		default:
+			break;
+	}
+
+	/*
 	m_Model_ship->Render(m_Direct3D->GetDeviceContext());
 	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model_ship->GetIndexCount(),
 		SRTMatrix_EarthMoonShip, viewMatrix, projectionMatrix, m_Model_ship->GetTexture());						/// 响应系统输入，切换运行轨道
+	*/
 	if (!result)
 	{
 		return false;

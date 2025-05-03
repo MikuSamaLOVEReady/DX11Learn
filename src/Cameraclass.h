@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
+extern int orbitID; 
 class CameraClass
 {
 public:

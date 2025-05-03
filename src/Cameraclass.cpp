@@ -2,6 +2,7 @@
 
 #include "Applicationclass.h"
 
+int orbitID = 0;  
 CameraClass::CameraClass():m_positionX(0.0f),m_positionY(0.0f),m_positionZ(0.0f),
                            m_rotationX(0.0f),m_rotationY(0.0f),m_rotationZ(0.0f),
 m_cameraUp(XMVectorSet(0.0f,1.0f,0.0f,0.0f)),
@@ -104,6 +105,13 @@ void CameraClass::ProcessKeyboardInput(float deltaTime)
 	if (GetAsyncKeyState('D') & 0x8000)
 		moveDelta += right;
 
+	if (GetAsyncKeyState('E') & 0x8000)		/// 切换地球轨道
+		orbitID = 1;
+	if (GetAsyncKeyState('M') & 0x8000)     /// 切换月球轨道
+		orbitID = 2;
+	if (GetAsyncKeyState('T') & 0x8000)     /// 切换至地月转移轨道
+		orbitID = 0;
+
 	if (!XMVector3Equal(moveDelta, XMVectorZero()))
 	{
 		moveDelta = XMVector3Normalize(moveDelta)
@@ -112,6 +120,8 @@ void CameraClass::ProcessKeyboardInput(float deltaTime)
 		m_position = XMVectorAdd(m_position, moveDelta);
 		//g_CamTarget = XMVectorAdd(g_CamTarget, moveDelta);
 	}
+
+	
 
 }
 
