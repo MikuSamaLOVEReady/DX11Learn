@@ -277,7 +277,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
 	m_projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, screenNear, screenDepth);
 
-	m_worldMatrix = XMMatrixIdentity()*0.1f;
+	m_worldMatrix = XMMatrixIdentity();
 	m_orthoMatrix = XMMatrixOrthographicLH(static_cast<float>(screenWidth), static_cast<float>(screenHeight), screenNear, screenDepth);
 	return true;
 }
