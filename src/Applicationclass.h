@@ -28,6 +28,8 @@ public:
 
 private:
 	bool Render(float);
+	void InitSkyBox();
+	//ID3D11Texture2D* CreateCubeMapTexture();
 
 private:
 	D3DClass* m_Direct3D;

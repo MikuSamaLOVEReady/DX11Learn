@@ -1,6 +1,8 @@
 #pragma once
 #include <d3d11.h>
 #include <stdio.h>
+#include <string>
+#include <vector>
 
 class TextureClass
 {
@@ -20,6 +22,9 @@ public:
     ~TextureClass();
 
     bool Initialize(ID3D11Device*, ID3D11DeviceContext*, char*);
+    bool InitializeCubeMap(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
+        const std::vector<std::string>& filenames);
+
     void Shutdown();
 
     ID3D11ShaderResourceView* GetTexture();

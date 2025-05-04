@@ -1,8 +1,10 @@
 #include "Applicationclass.h"
 
+#include <vector>
+
 ApplicationClass::ApplicationClass():m_Direct3D(nullptr),m_Camera(nullptr),
-m_Model_sun(nullptr), m_Model_earth(nullptr), m_Model_ship(nullptr),
-m_TextureShader(nullptr), deltaTime(0.0f)
+                                     m_Model_sun(nullptr), m_Model_earth(nullptr), m_Model_ship(nullptr),
+                                     m_TextureShader(nullptr), deltaTime(0.0f)
 {
 }
 
@@ -314,6 +316,22 @@ bool ApplicationClass::Render(float ratation)
 
 	m_Direct3D->EndScene();
 	return true;
+}
+
+void ApplicationClass::InitSkyBox()
+{
+	vector<std::string> cubeMapPaths = {
+		"./src/Resource/right.jpg",
+		"./src/Resource/left.jpg",
+		"./src/Resource/top.jpg",
+		"./src/Resource/bottom.jpg", 
+		"./src/Resource/front.jpg",
+		"./src/Resource/back.jpg"
+	};
+
+
+
+
 }
 
 

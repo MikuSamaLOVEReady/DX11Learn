@@ -1,4 +1,5 @@
 #include "Textureclass.h"
+#include "DirectXTex.h"
 
 TextureClass::TextureClass():m_targaData(nullptr),m_texture(nullptr),m_textureView(nullptr)
 {
@@ -66,6 +67,12 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	delete[] m_targaData;
 	m_targaData = nullptr;
 	return true;
+}
+
+bool TextureClass::InitializeCubeMap(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
+	const std::vector<std::string>& filenames)
+{
+	//DirectX::LoadFromDDSFile();
 }
 
 void TextureClass::Shutdown()
