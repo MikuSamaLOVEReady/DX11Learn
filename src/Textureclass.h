@@ -22,8 +22,10 @@ public:
     ~TextureClass();
 
     bool Initialize(ID3D11Device*, ID3D11DeviceContext*, char*);
-    bool InitializeCubeMap(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
-        const std::vector<std::string>& filenames);
+   // bool InitializeCubeMap(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
+   //     const std::vector<std::string>& filenames);
+
+    bool InitAnyImag(ID3D11Device*, ID3D11DeviceContext*, const wchar_t*);
 
     void Shutdown();
 
@@ -33,7 +35,8 @@ public:
     int GetHeight();
 
 private:
-    bool LoadTarga32Bit(char*);
+    bool LoadTarga32Bit(char*);     /// Load tag file
+   // bool LoadDDS(const wchar_t*);
 
 private:
     unsigned char* m_targaData;     /// raw texture (ON CPU RAM)
@@ -42,4 +45,5 @@ private:
     int m_width, m_height;
 
 };
+
 

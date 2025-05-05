@@ -14,7 +14,7 @@ Modelclass::~Modelclass()
 }
 
 bool Modelclass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
-	char* modelFilename, char* textureFilename)
+	char* modelFilename, const wchar_t* textureFilename)
 {
 	bool result;
 
@@ -240,12 +240,13 @@ void Modelclass::ReleaseModel()
 	return;
 }
 
-bool Modelclass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
+bool Modelclass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename)
 {
 	bool result;
 	m_Texture = new TextureClass();
 
-	result = m_Texture->Initialize(device, deviceContext, filename);
+	//result = m_Texture->Initialize(device, deviceContext, filename);
+	result = m_Texture->InitAnyImag(device, deviceContext, filename);
 	if (!result)
 	{
 		return false;

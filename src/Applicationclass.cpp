@@ -56,7 +56,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	m_Model_sun = new Modelclass();
 	result = m_Model_sun->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(),
-		modelFilename , textureFilename);
+		modelFilename , L"./src/Resource/Sun_2k.png");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -65,7 +65,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	m_Model_earth = new Modelclass();
 	result = m_Model_earth->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(),
-		earthFilename, earthTexFilename);
+		earthFilename, L"./src/Resource/Earth_2K.png");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -74,7 +74,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	m_Model_moon = new Modelclass();
 	result = m_Model_moon->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(),
-		moonFilename, moonTexFilename);
+		moonFilename, L"./src/Resource/Moon_2K.png");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -83,7 +83,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	m_Model_ship = new Modelclass();
 	result = m_Model_ship->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), 
-		shipFilename, shipTexFilename);
+		shipFilename, L"./src/Resource/fly2_2K.png");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);

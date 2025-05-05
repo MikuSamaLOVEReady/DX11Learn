@@ -1,5 +1,6 @@
 #include "Textureclass.h"
 #include "DirectXTex.h"
+#include "WICTextureLoader11.h"
 
 TextureClass::TextureClass():m_targaData(nullptr),m_texture(nullptr),m_textureView(nullptr)
 {
@@ -14,6 +15,8 @@ TextureClass::~TextureClass()
 {
 }
 
+
+/// 最终的目标就是获得Resource view
 bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
 {
 
@@ -69,11 +72,22 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	return true;
 }
 
+/*
 bool TextureClass::InitializeCubeMap(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	const std::vector<std::string>& filenames)
 {
-	//DirectX::LoadFromDDSFile();
 }
+
+bool TextureClass::LoadDDS(const wchar_t* filename)
+{
+	wchar_t ext[_MAX_EXT] = {};
+	DirectX::ScratchImage image;
+	DirectX::LoadFromDDSFile(filename, DirectX::DDS_FLAGS_NONE, nullptr, image);
+	
+	//HRESULT res = CreateShaderResourceView(d3dDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &carBodyColorMap);
+
+}*/
+
 
 void TextureClass::Shutdown()
 {
@@ -178,6 +192,13 @@ bool TextureClass::LoadTarga32Bit(char* filename)
 	targaImage = nullptr;
 
 	return true;
+}
+
+bool TextureClass::InitAnyImag(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename)
+{
+	HRESULT hr = DirectX::CreateWICTextureFromFile(device, deviceContext ,filename,
+		nullptr, &m_textureView);
+	return SUCCEEDED(hr);
 }
 
 

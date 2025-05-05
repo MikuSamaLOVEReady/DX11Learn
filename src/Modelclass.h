@@ -30,7 +30,7 @@ public:
 	~Modelclass();
 
 	//bool Initialize(ID3D11Device*);
-	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, char*, char*);
+	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, char*, const wchar_t*);
 
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);	/// REAL: upload data to GPU
@@ -46,7 +46,7 @@ private:
 	bool LoadModel(char*);
 	void ReleaseModel();
 
-	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
+	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, const wchar_t*);
 	void ReleaseTexture();
 
 private:
