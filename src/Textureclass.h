@@ -36,7 +36,6 @@ public:
 
 private:
     bool LoadTarga32Bit(char*);     /// Load tag file
-   // bool LoadDDS(const wchar_t*);
 
 private:
     unsigned char* m_targaData;     /// raw texture (ON CPU RAM)

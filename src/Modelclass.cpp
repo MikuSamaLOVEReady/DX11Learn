@@ -66,6 +66,12 @@ void Modelclass::Render(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
+void Modelclass::RenderGeo(ID3D11DeviceContext* deviceContext)
+{
+	RenderBuffersGeo(deviceContext);
+	return;
+}
+
 int Modelclass::GetIndexCount()
 {
 	return  m_indexCount;
@@ -74,6 +80,47 @@ int Modelclass::GetIndexCount()
 ID3D11ShaderResourceView* Modelclass::GetTexture()
 {
 	return m_Texture->GetTexture();
+}
+
+void Modelclass::CreateFromGeometry(ID3D11Device* device, const GeometryData& data)
+{
+	D3D11_BUFFER_DESC  vertexBufferDesc, indexBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData;					/// real data
+	HRESULT result;
+
+	
+	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.ByteWidth = (uint32_t)data.vertices.size() * sizeof(XMFLOAT3);
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
+	vertexBufferDesc.StructureByteStride = 0;
+	vertexData.pSysMem = data.vertices.data();;
+	vertexData.SysMemPitch = 0;
+	vertexData.SysMemSlicePitch = 0;
+	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	if (FAILED(result))
+	{
+		return ;
+	}
+
+	m_indexCount = data.indices16.size();
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = (uint16_t)data.indices16.size() * sizeof(uint16_t);
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexData.pSysMem = data.indices16.data();
+	indexData.SysMemPitch = 0;
+	indexData.SysMemSlicePitch = 0;
+
+	device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+	if (FAILED(result))
+	{
+		return;
+	}
+
+	return;
 }
 
 bool Modelclass::InitializeBuffers(ID3D11Device* device)
@@ -183,6 +230,20 @@ void Modelclass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	return;
+}
+
+void Modelclass::RenderBuffersGeo(ID3D11DeviceContext* deviceContext)
+{
+	unsigned int stride;
+	unsigned int offset;
+
+	stride = sizeof(VertexTypeGeo);
+	offset = 0;
+
+	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	return;
 }
 

@@ -76,17 +76,8 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 bool TextureClass::InitializeCubeMap(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	const std::vector<std::string>& filenames)
 {
-}
-
-bool TextureClass::LoadDDS(const wchar_t* filename)
-{
-	wchar_t ext[_MAX_EXT] = {};
-	DirectX::ScratchImage image;
-	DirectX::LoadFromDDSFile(filename, DirectX::DDS_FLAGS_NONE, nullptr, image);
-	
-	//HRESULT res = CreateShaderResourceView(d3dDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &carBodyColorMap);
-
 }*/
+
 
 
 void TextureClass::Shutdown()

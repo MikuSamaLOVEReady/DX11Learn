@@ -7,6 +7,7 @@
 #include "Modelclass.h"
 //#include "Colorshaderclass.h"
 #include "Textureshaderclass.h"
+#include "SkyboxShader.h"
 
 
 const bool FULL_SCREEN = false;
@@ -28,8 +29,9 @@ public:
 
 private:
 	bool Render(float);
-	void InitSkyBox();
 	//ID3D11Texture2D* CreateCubeMapTexture();
+	bool LoadDDS(ID3D11Device*  , const wchar_t*);
+
 
 private:
 	D3DClass* m_Direct3D;
@@ -38,10 +40,14 @@ private:
 	Modelclass* m_Model_earth;
 	Modelclass* m_Model_moon;
 	Modelclass* m_Model_ship;
+	Modelclass* m_Model_SkyBox;
 
 
 	//ColorShaderClass* m_ColorShader;
 	Textureshaderclass* m_TextureShader;
+	SkyboxShader* m_SkyBoxShader;
+	ID3D11ShaderResourceView* mCubeMapSRV;
+	GeometryData skyboxData;
 
 	//LightShaderClass* m_LightShader;
 	//LightClass* m_Light;

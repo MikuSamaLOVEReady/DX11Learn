@@ -1,5 +1,6 @@
 #include "Applicationclass.h"
 
+#include <DirectXTex.h>
 #include <vector>
 
 ApplicationClass::ApplicationClass():m_Direct3D(nullptr),m_Camera(nullptr),
@@ -108,6 +109,20 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	/// cube map
+	m_Model_SkyBox = new Modelclass();
+	skyboxData = Geometry::CreateBox();
+	m_Model_SkyBox->CreateFromGeometry(m_Direct3D->GetDevice(), skyboxData);
+	/// load cubemap
+	LoadDDS(m_Direct3D->GetDevice(), L"./src/Resource/cubemap3.dds");
+	m_SkyBoxShader = new SkyboxShader();
+	result = m_SkyBoxShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the SKY shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 
 	/// Time
 	QueryPerformanceFrequency(&freq);
@@ -178,6 +193,15 @@ bool ApplicationClass::Frame()
 	return true;
 }
 
+bool ApplicationClass::LoadDDS(ID3D11Device* device, const wchar_t* filename)
+{
+	DirectX::ScratchImage image;
+	//CreateDDSTextureFromFile
+	DirectX::LoadFromDDSFile(filename, DirectX::DDS_FLAGS_NONE, nullptr, image);
+	HRESULT hr = DirectX::CreateShaderResourceView(device, image.GetImages(), image.GetImageCount(),
+		image.GetMetadata(), &mCubeMapSRV);
+	return SUCCEEDED(hr);
+}
 
 bool ApplicationClass::Render(float ratation)
 {
@@ -303,11 +327,24 @@ bool ApplicationClass::Render(float ratation)
 			break;
 	}
 
-	/*
-	m_Model_ship->Render(m_Direct3D->GetDeviceContext());
-	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model_ship->GetIndexCount(),
-		SRTMatrix_EarthMoonShip, viewMatrix, projectionMatrix, m_Model_ship->GetTexture());						/// 响应系统输入，切换运行轨道
-	*/
+	if (!result)
+	{
+		return false;
+	}
+
+	/// SkyBOX model render
+	m_Model_SkyBox->RenderGeo(m_Direct3D->GetDeviceContext());	/// primative + vertexBuffer + indexbuffer
+	/// layout + Drawindex 放在shader中执行
+	//XMMATRIX MVPMatrix = XMMatrixMultiply(toEarthOrbitMatrix, viewMatrix );
+	//MVPMatrix = XMMatrixMultiply(MVPMatrix, projectionMatrix);
+	XMMATRIX V = viewMatrix;
+	V.r[3] = g_XMIdentityR3;
+	XMMATRIX MVPMatrix = XMMatrixMultiply(V, projectionMatrix);
+	MVPMatrix = XMMatrixTranspose(MVPMatrix);
+
+
+	result = m_SkyBoxShader->Render(m_Direct3D->GetDeviceContext(), m_Model_SkyBox->GetIndexCount(),
+		MVPMatrix, mCubeMapSRV);
 	if (!result)
 	{
 		return false;
@@ -317,21 +354,5 @@ bool ApplicationClass::Render(float ratation)
 	m_Direct3D->EndScene();
 	return true;
 }
-
-void ApplicationClass::InitSkyBox()
-{
-	vector<std::string> cubeMapPaths = {
-		"./src/Resource/right.jpg",
-		"./src/Resource/left.jpg",
-		"./src/Resource/top.jpg",
-		"./src/Resource/bottom.jpg", 
-		"./src/Resource/front.jpg",
-		"./src/Resource/back.jpg"
-	};
-
-
-
-
-}
-
+ 
 

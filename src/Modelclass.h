@@ -3,6 +3,7 @@
 #include <fstream>
 #include <directxmath.h>
 #include "Textureclass.h"
+#include "Geometry.h"
 
 using namespace DirectX;
 using namespace  std;
@@ -16,6 +17,12 @@ private:
 		XMFLOAT2 texture;
 		XMFLOAT3 normal;
 	};
+
+	struct VertexTypeGeo
+	{
+		XMFLOAT3 position;
+	};
+
 
 	struct ModelType
 	{
@@ -34,15 +41,18 @@ public:
 
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);	/// REAL: upload data to GPU
+	void RenderGeo(ID3D11DeviceContext*);
 
 	int GetIndexCount();
 	ID3D11ShaderResourceView* GetTexture();
+	void CreateFromGeometry( ID3D11Device* device, const GeometryData& data);
 
 
 private:
 	bool InitializeBuffers(ID3D11Device*);		/// set VBO IBO data¡¾FIX Data¡¿
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);	/// to set the vertex buffer and index buffer as active on the input assembler in the GPU.
+	void RenderBuffersGeo(ID3D11DeviceContext*);
 	bool LoadModel(char*);
 	void ReleaseModel();
 
