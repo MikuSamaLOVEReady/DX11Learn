@@ -193,6 +193,12 @@ bool ApplicationClass::Frame()
 	return true;
 }
 
+
+CameraClass* ApplicationClass::GetCamera()
+{
+	return m_Camera;
+}
+
 bool ApplicationClass::LoadDDS(ID3D11Device* device, const wchar_t* filename)
 {
 	DirectX::ScratchImage image;
@@ -306,27 +312,33 @@ bool ApplicationClass::Render(float ratation)
 	XMMATRIX SRTMatrix_ship = XMMatrixMultiply(SRMatrix_ship, translateMatrix_local);	/// local matrix
 	XMMATRIX worldMatrix_ship = XMMatrixMultiply(SRTMatrix_ship, worldMatrix_earth);
 
-	// TODO： 通过按键时间进行切换
-	
+	// 通过按键切换轨道
+	XMMATRIX cur_Matrix = SRTMatrix_EarthMoonShip;
 	m_Model_ship->Render(m_Direct3D->GetDeviceContext());
 	switch (orbitID)
 	{
 		case 0:
-			result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model_ship->GetIndexCount(),
-				SRTMatrix_EarthMoonShip, viewMatrix, projectionMatrix, m_Model_ship->GetTexture());
+			cur_Matrix = SRTMatrix_EarthMoonShip;
 			break;
 		case 1:
-			result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model_ship->GetIndexCount(),
-				toEarthOrbitMatrix, viewMatrix, projectionMatrix, m_Model_ship->GetTexture());
+			cur_Matrix = toEarthOrbitMatrix;
 			break;
 		case 2:
-			result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model_ship->GetIndexCount(),
-				toMoonOrbitMatrix, viewMatrix, projectionMatrix, m_Model_ship->GetTexture());
+			cur_Matrix = toMoonOrbitMatrix;
 			break;
 		default:
 			break;
 	}
 
+	/// 相机始终跟随飞船
+	XMVECTOR worldPosVec = cur_Matrix.r[3];
+	float worldX = XMVectorGetX(worldPosVec);
+	float worldY = XMVectorGetY(worldPosVec);
+	float worldZ = XMVectorGetZ(worldPosVec);
+	m_Camera->SetPosition(worldX, worldY+10, worldZ);
+
+	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model_ship->GetIndexCount(),
+		cur_Matrix, viewMatrix, projectionMatrix, m_Model_ship->GetTexture());
 	if (!result)
 	{
 		return false;

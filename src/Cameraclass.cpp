@@ -7,6 +7,8 @@ CameraClass::CameraClass():m_positionX(0.0f),m_positionY(0.0f),m_positionZ(0.0f)
                            m_rotationX(0.0f),m_rotationY(0.0f),m_rotationZ(0.0f),
 m_cameraUp(XMVectorSet(0.0f,1.0f,0.0f,0.0f)),
 m_cameraFront(XMVectorSet(0.0f,0.0f,1.0f,0.0f)),
+m_right(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f)),
+m_LastMousePosX(0.0f),m_LastMousePosY(0.0f),
 m_position(XMVectorSet(m_positionX, m_positionY, m_positionZ,0.0f))
 {
 }
@@ -124,6 +126,18 @@ void CameraClass::ProcessKeyboardInput(float deltaTime)
 	
 
 }
+
+void CameraClass::Pitch(float rad)
+{
+	m_rotationX += rad;
+}
+
+void CameraClass::RotateY(float rad)
+{
+	m_rotationY += rad;
+}
+
+
 
 
 

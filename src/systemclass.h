@@ -25,6 +25,9 @@ public:
 	void Shutdown();
 	void Run();
 
+	//static SystemClass* GetSys();
+	void OnMouseMove(WPARAM btnState, int x, int y);
+	//LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
 
 private:
@@ -32,11 +35,15 @@ private:
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
 
+protected:
+	//static SystemClass* mSys;
+
 private:
 	LPCWSTR m_applicationName;		/// const wchar_t* XXX  
 	HINSTANCE m_hinstance;			/// 
 	HWND m_hwnd;
 
+	POINT mLastMousePos;
 	InputClass* m_Input;
 	ApplicationClass* m_Application;
 

@@ -1,11 +1,9 @@
 #pragma once
 
 #include <windows.h>
-
 #include "D3dclass.h"
 #include "Cameraclass.h"
 #include "Modelclass.h"
-//#include "Colorshaderclass.h"
 #include "Textureshaderclass.h"
 #include "SkyboxShader.h"
 
@@ -27,6 +25,8 @@ public:
 	void Shutdown();
 	bool Frame();
 
+	CameraClass* GetCamera();
+ 
 private:
 	bool Render(float);
 	//ID3D11Texture2D* CreateCubeMapTexture();

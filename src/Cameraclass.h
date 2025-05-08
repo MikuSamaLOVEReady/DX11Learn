@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DirectXMath.h>
+
 using namespace DirectX;
 
 extern int orbitID; 
@@ -21,8 +22,8 @@ public:
 	void GetViewMatrix(XMMATRIX&);
 	void UpdateViewMatrix(XMVECTOR positionVector, XMVECTOR lookAtVector, XMVECTOR upVector);
 	void ProcessKeyboardInput(float deltaTime);
-
-
+	void Pitch(float rad);
+	void RotateY(float rad);
 private:
 	float m_positionX, m_positionY, m_positionZ;
 	float m_rotationX, m_rotationY, m_rotationZ;	/// unit == degree
@@ -30,6 +31,11 @@ private:
 	XMVECTOR  m_cameraFront;		/// positionVector + Front = look at
 	XMVECTOR  m_cameraUp;
 	XMVECTOR  m_position;
+	XMVECTOR  m_right;
+
+
+	float m_LastMousePosX;
+	float m_LastMousePosY;
 };
 
 
