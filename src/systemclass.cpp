@@ -103,8 +103,8 @@ void SystemClass::OnMouseMove(WPARAM btnState, int x, int y)
 	if ((btnState & MK_LBUTTON) != 0)
 	{
 		// Make each pixel correspond to a quarter of a degree.
-		float dx = XMConvertToRadians(static_cast<float>(x - mLastMousePos.x));
-		float dy = XMConvertToRadians(static_cast<float>(y - mLastMousePos.y));
+		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
+		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
 
 		m_Application->GetCamera()->Pitch(dy);
 		m_Application->GetCamera()->RotateY(dx);

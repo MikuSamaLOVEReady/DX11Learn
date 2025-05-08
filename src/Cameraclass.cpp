@@ -127,14 +127,20 @@ void CameraClass::ProcessKeyboardInput(float deltaTime)
 
 }
 
-void CameraClass::Pitch(float rad)
+void CameraClass::Pitch(float angle)
 {
-	m_rotationX += rad;
+	XMMATRIX R = XMMatrixRotationAxis(m_right, angle);
+	m_cameraUp = XMVector3TransformNormal(m_cameraUp, R);
+	m_cameraFront = XMVector3TransformNormal(m_cameraFront, R);
 }
 
-void CameraClass::RotateY(float rad)
+void CameraClass::RotateY(float angle)
 {
-	m_rotationY += rad;
+	XMMATRIX R = XMMatrixRotationY(angle);
+
+	m_right = XMVector3TransformNormal(m_right, R);
+	m_cameraUp = XMVector3TransformNormal(m_cameraUp, R);
+	m_cameraFront =   XMVector3TransformNormal(m_cameraFront, R);
 }
 
 

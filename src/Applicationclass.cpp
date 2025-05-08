@@ -335,7 +335,8 @@ bool ApplicationClass::Render(float ratation)
 	float worldX = XMVectorGetX(worldPosVec);
 	float worldY = XMVectorGetY(worldPosVec);
 	float worldZ = XMVectorGetZ(worldPosVec);
-	m_Camera->SetPosition(worldX, worldY+10, worldZ);
+	//m_Camera->SetPosition(worldX, worldY+10, worldZ);
+
 
 	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model_ship->GetIndexCount(),
 		cur_Matrix, viewMatrix, projectionMatrix, m_Model_ship->GetTexture());
