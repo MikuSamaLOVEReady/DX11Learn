@@ -1,5 +1,5 @@
 #include "systemclass.h"
-#include "Cameraclass.h"
+//#include "Cameraclass.h"
 #include <WindowsX.h>
 
 
@@ -108,6 +108,8 @@ void SystemClass::OnMouseMove(WPARAM btnState, int x, int y)
 
 		m_Application->GetCamera()->Pitch(dy);
 		m_Application->GetCamera()->RotateY(dx);
+		m_Application->GetCameraTrd()->RotateX(dy);
+		m_Application->GetCameraTrd()->RotateY(dx);
 		//mCamera.RotateY(dx);
 	}
 	mLastMousePos.x = x;
@@ -132,6 +134,12 @@ LRESULT SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM 
 		case WM_MOUSEMOVE:
 			OnMouseMove(wparam, GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
 			return 0;
+		case WM_MOUSEWHEEL:
+		{
+			short delta = GET_WHEEL_DELTA_WPARAM(wparam);
+			m_Application->GetCameraTrd()->Approach(-0.1 * delta);
+			return 0;
+		}
 		default:
 			{
 				return DefWindowProc(hwnd, umsg, wparam, lparam);
@@ -202,8 +210,8 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	}
 	else
 	{
-		screenWidth = 800;
-		screenHeight = 600;
+		screenWidth = 1280;
+		screenHeight = 720;
 
 		posX = (GetSystemMetrics(SM_CXSCREEN) - screenWidth) / 2;
 		posY = (GetSystemMetrics(SM_CYSCREEN) - screenHeight) / 2;

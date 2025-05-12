@@ -186,6 +186,23 @@ bool SkyboxShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFi
 		return false;
 	}
 
+	D3D11_RASTERIZER_DESC rasterDesc = {};
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode = D3D11_CULL_NONE;						/// BACK feature
+	rasterDesc.DepthBias = 0;									/// for shadow
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.DepthClipEnable = true;
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.ScissorEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;						///
+	result = device->CreateRasterizerState(&rasterDesc, &m_rasterState);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -218,7 +235,7 @@ bool SkyboxShader::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 {
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	MVPMatrix = XMMatrixTranspose(MVPMatrix);
+	//MVPMatrix = XMMatrixTranspose(MVPMatrix);
 	HRESULT result = deviceContext->Map(m_matrixBuffer, 0,
 		D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
@@ -236,6 +253,9 @@ bool SkyboxShader::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 
 void SkyboxShader::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {
+	
+
+	deviceContext->RSSetState(m_rasterState);
 	
 	deviceContext->OMSetDepthStencilState(m_DepthStencilState, 0);
 	deviceContext->IASetInputLayout(m_layout);

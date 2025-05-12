@@ -264,7 +264,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 
 	m_deviceContext->RSSetState(m_rasterState);
 
-	///4. DX-viewport 
+	///4. DX-viewport [理论上因该跟随相机变化]
 	m_viewport.Width = static_cast<float>(screenWidth);
 	m_viewport.Height = static_cast<float>(screenHeight);
 	m_viewport.MinDepth = 0.0f;
@@ -273,7 +273,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	m_viewport.TopLeftY = 0.0f;
 	m_deviceContext->RSSetViewports(1, &m_viewport);
 
-	fieldOfView = 3.141592654f / 4.0f;
+	fieldOfView = 3.141592654f / 3.0f;
 	screenAspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
 	m_projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, screenNear, screenDepth);
 

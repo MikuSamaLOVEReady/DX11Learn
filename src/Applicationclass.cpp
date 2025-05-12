@@ -3,7 +3,7 @@
 #include <DirectXTex.h>
 #include <vector>
 
-ApplicationClass::ApplicationClass():m_Direct3D(nullptr),m_Camera(nullptr),
+ApplicationClass::ApplicationClass():m_Direct3D(nullptr), m_FirstPersonCam(nullptr),
                                      m_Model_sun(nullptr), m_Model_earth(nullptr), m_Model_ship(nullptr),
                                      m_TextureShader(nullptr), deltaTime(0.0f)
 {
@@ -42,8 +42,19 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	m_Camera = new CameraClass;
-	m_Camera->SetPosition(0.0f, 0.0f, -245.0f);
+	//m_Camera = new CameraClass;
+	//m_Camera->SetPosition(0.0f, 0.0f, -245.0f);
+
+	m_FirstPersonCam = new FirstPersonCamera;
+	m_ThirdPersonCam = new ThirdPersonCamera;
+
+	m_FirstPersonCam->LookTo(XMFLOAT3(0.0f, 0.0f, -10.0f),
+		XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+	m_ThirdPersonCam->SetDistance(20.0f);
+	m_ThirdPersonCam->SetDistanceMinMax(10.0f, 90.0f);
+	m_ThirdPersonCam->SetRotationX(XM_PIDIV4);
+
+	
 
 	//strcpy_s(modelFilename, "./src/Resource/sphere.txt");
 	strcpy_s(modelFilename, "./src/Resource/Sun.txt");
@@ -156,11 +167,7 @@ void ApplicationClass::Shutdown()
 		m_Model_sun = nullptr;
 	}
 
-	if (m_Camera)
-	{
-		delete m_Camera;
-		m_Camera = nullptr;
-	}
+ 
 
 	if (m_Direct3D)
 	{
@@ -170,6 +177,21 @@ void ApplicationClass::Shutdown()
 	}
 
 	return;
+}
+
+void ApplicationClass::ProcessKeyboardInput()
+{
+
+	if (GetAsyncKeyState('E') & 0x8000)		/// 切换地球轨道
+		orbitID = 1;
+	if (GetAsyncKeyState('M') & 0x8000)     /// 切换月球轨道
+		orbitID = 2;
+	if (GetAsyncKeyState('T') & 0x8000)     /// 切换至地月转移轨道
+		orbitID = 0;
+	if (GetAsyncKeyState('F') & 0x8000)
+		SetFPViewMod();
+	if (GetAsyncKeyState('G') & 0x8000)
+		SetTPViewMod();
 }
 
 bool ApplicationClass::Frame()
@@ -183,7 +205,7 @@ bool ApplicationClass::Frame()
 		rotation += 360.0f;
 	}
 
-
+	ProcessKeyboardInput();
 	result = Render(rotation);
 	if (!result)
 	{
@@ -194,9 +216,24 @@ bool ApplicationClass::Frame()
 }
 
 
-CameraClass* ApplicationClass::GetCamera()
+Camera* ApplicationClass::GetCamera()
 {
-	return m_Camera;
+	return m_FirstPersonCam;
+}
+
+ThirdPersonCamera* ApplicationClass::GetCameraTrd()
+{
+	return m_ThirdPersonCam;
+}
+
+void ApplicationClass::SetFPViewMod()
+{
+	isFirstPerson = true;
+}
+
+void ApplicationClass::SetTPViewMod()
+{
+	isFirstPerson = false;
 }
 
 bool ApplicationClass::LoadDDS(ID3D11Device* device, const wchar_t* filename)
@@ -218,13 +255,20 @@ bool ApplicationClass::Render(float ratation)
 	QueryPerformanceCounter(&t1);
 	float deltaTime = float(t1.QuadPart - t0.QuadPart) / freq.QuadPart;
 	t0 = t1;
-	m_Camera->ProcessKeyboardInput(deltaTime);
+	//m_Camera->ProcessKeyboardInput(deltaTime);
 
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
-	m_Camera->Render();				/// update camera data
+	//m_Camera->Render();				/// update camera data
 	m_Direct3D->GetWorldMatrix(worldMatrix);
-	m_Camera->GetViewMatrix(viewMatrix);
-	m_Direct3D->GetProjectionMatrix(projectionMatrix);
+	if (isFirstPerson)
+	{
+		viewMatrix = m_FirstPersonCam->GetViewMatrixXM();
+	}else
+	{
+		viewMatrix = m_ThirdPersonCam->GetViewMatrixXM();
+	}
+	//m_Camera->GetViewMatrix(viewMatrix);
+	m_Direct3D->GetProjectionMatrix(projectionMatrix);			// TODO：这个本来该是相机操控的
 
 	/// Sun rotate matrix && Translate Matrix  
 	XMMATRIX  rotateMatrix_sun = XMMatrixRotationY(ratation);  
@@ -293,7 +337,6 @@ bool ApplicationClass::Render(float ratation)
 	toEarthOrbitMatrix = XMMatrixMultiply(toEarthOrbitMatrix, orbitRotate_earthShipSpeed);			   /// 进行绕太阳旋转，模拟进入地球轨道
 
 	/// 飞船在地月轨道运行
-	//TODO: 地月轨道定义
 	float theta = fmod(ratation * 35.f, 2 * XM_PI); // 控制飞船的移动速度
 	float a = 35.0f; // 半长轴
 	float b = 135.0f; // 半短轴
@@ -303,14 +346,6 @@ bool ApplicationClass::Render(float ratation)
 	XMMATRIX translateMatrix_EarthMoonShip = XMMatrixTranslation(x, y, z);
 	XMMATRIX SRTMatrix_EarthMoonShip = XMMatrixMultiply(scaleMatrix_ship, translateMatrix_EarthMoonShip);
 	SRTMatrix_EarthMoonShip = XMMatrixMultiply(SRTMatrix_EarthMoonShip, worldMatrix_earth);
-
-	// 停泊轨道（没要求）
-	float orbit_radius = 25.0f;			  // 停泊轨道的半径
-	float orbit_angle = ratation * 6.0f;  // 随时间变化的角度
-	XMMATRIX translateMatrix_local = XMMatrixTranslation(orbit_radius * cos(orbit_angle), 25.0f, orbit_radius * sin(orbit_angle));
-	XMMATRIX SRMatrix_ship = XMMatrixMultiply(scaleMatrix_ship, rotateMatrix_ship);
-	XMMATRIX SRTMatrix_ship = XMMatrixMultiply(SRMatrix_ship, translateMatrix_local);	/// local matrix
-	XMMATRIX worldMatrix_ship = XMMatrixMultiply(SRTMatrix_ship, worldMatrix_earth);
 
 	// 通过按键切换轨道
 	XMMATRIX cur_Matrix = SRTMatrix_EarthMoonShip;
@@ -363,6 +398,10 @@ bool ApplicationClass::Render(float ratation)
 		return false;
 	}
 
+	/// 第一人称在飞船头部一点点的位置
+	m_FirstPersonCam->SetPosition({ worldX , worldY , worldZ+10 });
+	m_ThirdPersonCam->SetPosition({ worldX, worldY, worldZ });
+	m_ThirdPersonCam->SetTarget({ worldX, worldY, worldZ });
 
 	m_Direct3D->EndScene();
 	return true;

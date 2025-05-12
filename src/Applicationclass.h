@@ -2,7 +2,7 @@
 
 #include <windows.h>
 #include "D3dclass.h"
-#include "Cameraclass.h"
+#include "Camera.h"
 #include "Modelclass.h"
 #include "Textureshaderclass.h"
 #include "SkyboxShader.h"
@@ -11,7 +11,7 @@
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
-const float SCREEN_NEAR = 0.3f;
+const float SCREEN_NEAR = 1.0f;
 
 
 class ApplicationClass
@@ -25,7 +25,13 @@ public:
 	void Shutdown();
 	bool Frame();
 
-	CameraClass* GetCamera();
+	//CameraClass* GetCamera();
+	Camera* GetCamera();
+	ThirdPersonCamera* GetCameraTrd();
+	void SetFPViewMod();
+	void SetTPViewMod();
+	void ProcessKeyboardInput();
+
  
 private:
 	bool Render(float);
@@ -35,12 +41,16 @@ private:
 
 private:
 	D3DClass* m_Direct3D;
-	CameraClass* m_Camera;
+	//CameraClass* m_Camera;
+	Camera* m_FirstPersonCam;
+	ThirdPersonCamera* m_ThirdPersonCam;
+
 	Modelclass* m_Model_sun;
 	Modelclass* m_Model_earth;
 	Modelclass* m_Model_moon;
 	Modelclass* m_Model_ship;
 	Modelclass* m_Model_SkyBox;
+	bool isFirstPerson = false;
 
 
 	//ColorShaderClass* m_ColorShader;

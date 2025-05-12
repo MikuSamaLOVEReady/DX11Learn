@@ -39,5 +39,6 @@ private:
 	/// sampler state£¨how to sample£©
 	ID3D11SamplerState* m_samplerState;
 	ID3D11DepthStencilState* m_DepthStencilState;
+	ID3D11RasterizerState* m_rasterState;
 };
 
